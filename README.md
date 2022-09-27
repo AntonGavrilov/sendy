@@ -64,19 +64,19 @@ public class TestAsyncCommand : IAsyncRequest
 
 
 ```
-### Add handler for created classes
+### Add handler for created request classes
 Add command handlers or query handlers class deriving form 'IHandler' or 'IAsyncHandler'. For command handler use 'IRequest'('IAsyncHandler') interface or if you want query use 'IHandler<>'('IAsyncRequest<>')
 
 Sync example:
 ```cs
-public class TestSyncCommandWithResultHandler : IHandler<TestSyncCommandWithResult, SearchResultDto>
+public class TestSyncCommandWithResultHandler : IHandler<TestSyncCommandWithResult, TestResult>
 {
    private readonly ILogger<TestSyncCommandHandler> _logger;
    public TestSyncCommandWithResultHandler(ILogger<TestSyncCommandHandler> logger)
    {
       _logger = logger;
    }
-   public SearchResultDto Handle(TestSyncCommandWithResult request)
+   public TestResult Handle(TestSyncCommandWithResult request)
    {
       _logger.LogInformation("TestSyncCommandWithResult");
       return new SearchResultDto();
@@ -103,16 +103,44 @@ public class TestSyncCommandHandler : IHandler<TestSyncCommand>
 Async example:
 
 ```cs
-public class TestResult
+public class TestAsyncCommandWithResultHandler : IAsyncHandler<TestAsyncCommandWithResult, SearchResultDto>
 {
-   ... properties
-}
-public class TestAsyncCommandWithResult : IAsyncRequest<TestResult>
-{
-   ... properties
+   private readonly ILogger<TestSyncCommandHandler> _logger;
+   public TestSyncCommandWithResultHandler(ILogger<TestSyncCommandHandler> logger)
+   {
+      _logger = logger;
+   }
+   public Task<TestResult> Handle(TestSyncCommandWithResult request)
+   {
+      _logger.LogInformation("TestSyncCommandWithResult");
+      return new SearchResultDto();
+   }
 }
 
-public class TestAsyncCommand : IAsyncRequest
+public class TestAsyncCommandHandler : IAsyncHandler<TestAsyncCommand>
 {
-   ... properties
+   private readonly ILogger<TestSyncCommandHandler> _logger;
+
+   public TestSyncCommandHandler(ILogger<TestSyncCommandHandler> logger)
+   {
+      _logger = logger;
+   }
+
+   public Task Handle(TestAsyncCommand request)
+   {
+      _logger.LogInformation("TestSyncCommand");
+   }
 }
+
+```
+### Use ISendy class for sending command or queries.
+
+Use 'Send' method of ISendy instanse to send sync command or query and use "SendAsync" command for async functionality
+
+```cs
+
+var result = _sendy.Send(new TestSyncCommandWithResult());
+
+_sendy.Send(new TestSyncCommand());
+
+```
