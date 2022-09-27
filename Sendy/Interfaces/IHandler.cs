@@ -1,11 +1,22 @@
 ﻿namespace Sendy.Interfaces;
 
-public interface IHandler<in TSetRequest, out TSetResponse> where TSetRequest : IRequest<TSetResponse>
+public interface IHandler<in TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
-    public TSetResponse Handle(TSetRequest request);
+   public TResponse Handle(TRequest request);
 }
 
-public interface IHandler<TSetRequest> where TSetRequest : IRequest
+public interface IHandler<TRequest> where TRequest : IRequest
 {
-   public void Handle(TSetRequest request);
+   public void Handle(TRequest request);   
+}
+
+
+public interface IAsyncHandler<in TRequest, TResponse> where TRequest : IAsyncRequest<TResponse>
+{
+   public Task<TResponse> Handle(TRequest request);
+}
+
+public interface IAsyncHandler<TRequest> where TRequest : IAsyncRequest
+{
+   public Task Handle(TRequest request);
 }

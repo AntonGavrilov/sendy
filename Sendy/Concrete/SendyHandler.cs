@@ -1,8 +1,5 @@
 ﻿using Sendy.Interfaces;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
 
 namespace Sendy.Concrete;
 
@@ -59,5 +56,51 @@ public class SendyHandler : ISendy
 
 
       method?.Invoke(handler, new object?[] { request });
+   }
+
+   public async Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request) where TResponse : class
+   {
+      var generic = typeof(IAsyncHandler<,>);
+      var response = request.GetType().GetInterfaces()[0].GetGenericArguments()[0];
+      Type[] typeArgs = { request.GetType(), response };
+
+      Type constructed = generic.GetGenericTypeDefinition().MakeGenericType(typeArgs);
+
+      var targetTypeList = _assembly
+         .GetTypes()
+         .Where(t => t.GetInterfaces()
+         .Any(t => t == constructed)).ToList();
+
+      var handler = _serviceProvider.GetService(targetTypeList[0]);
+      var method = targetTypeList[0].GetMethod("Handle");
+
+      var result = (Task<TResponse>)method?.Invoke(handler, new object?[] { request });
+
+      if (result == null)
+      {
+         return null;
+      }
+
+      return await result;
+   }
+
+   public async Task SendAsync(IAsyncRequest request)
+   {
+      var generic = typeof(IAsyncHandler<IAsyncRequest>);
+      Type[] typeArgs = { request.GetType() };
+
+      Type constructed = generic.GetGenericTypeDefinition().MakeGenericType(typeArgs);
+
+      var targetTypeList = _assembly
+         .GetTypes()
+         .Where(t => t.GetInterfaces()
+         .Any(t => t == constructed)).ToList();
+
+      var handler = _serviceProvider.GetService(targetTypeList[0]);
+      var method = targetTypeList[0].GetMethod("Handle");
+
+      var task = (Task)method?.Invoke(handler, new object?[] { request });
+
+      await task;
    }
 }

@@ -34,14 +34,14 @@ public static class ServiceRegister
                  .Any(t => t == constructed)).ToList();
 
          if (targetTypeList.Count == 0)
-            throw new Exception($"There is no handlers of request '{request.GetType().Name}'");
+            throw new Exception($"There is no handlers of request '{request.Name}'");
 
          if (targetTypeList.Count > 1)
-            throw new Exception($"There are several handlers of request '{request.GetType().Name}'");
+            throw new Exception($"There are several handlers of request '{request.Name}'");
 
          services.AddScoped(targetTypeList[0]);
 
-      }
+      } 
 
       interfaces = assembly.
          GetTypes()
@@ -64,15 +64,75 @@ public static class ServiceRegister
                  .Any(t => t == constructed)).ToList();
 
          if (targetTypeList.Count == 0)
-            throw new Exception($"There is no handlers of request '{request.GetType().Name}'");
+            throw new Exception($"There is no handlers of request '{request.Name}'");
 
          if (targetTypeList.Count > 1)
-            throw new Exception($"There are several handlers of request '{request.GetType().Name}'");
+            throw new Exception($"There are several handlers of request '{request.Name}'");
 
          services.AddScoped(targetTypeList[0]);
 
       }
 
+      interfaces = assembly.
+          GetTypes()
+          .Where
+          (type =>
+             type
+             .GetInterfaces()
+             .Any(t => t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(IAsyncRequest<>)))).ToList();
+
+      foreach (var request in interfaces)
+      {
+         var generic = typeof(IAsyncHandler<,>);
+         var response = request.GetInterfaces()[0].GetGenericArguments()[0];
+         Type[] typeArgs = { request, response };
+
+         Type constructed = generic.GetGenericTypeDefinition().MakeGenericType(typeArgs);
+         var targetTypeList =
+             assembly
+             .GetTypes()
+             .Where(t => t.GetInterfaces()
+                 .Any(t => t == constructed)).ToList();
+
+         if (targetTypeList.Count == 0)
+            throw new Exception($"There is no handlers of request '{request.Name}'");
+
+         if (targetTypeList.Count > 1)
+            throw new Exception($"There are several handlers of request '{request.Name}'");
+
+         services.AddScoped(targetTypeList[0]);
+
+      }
+
+      interfaces = assembly.
+         GetTypes()
+         .Where
+         (type =>
+            type
+            .GetInterfaces()
+            .Any(t => (t == typeof(IAsyncRequest)))).ToList();
+
+      foreach (var request in interfaces)
+      {
+         var generic = typeof(IAsyncHandler<IAsyncRequest>);
+         Type[] typeArgs = { request };
+
+         Type constructed = generic.GetGenericTypeDefinition().MakeGenericType(typeArgs);
+         var targetTypeList =
+             assembly
+             .GetTypes()
+             .Where(t => t.GetInterfaces()
+                 .Any(t => t == constructed)).ToList();
+
+         if (targetTypeList.Count == 0)
+            throw new Exception($"There is no handlers of request '{request.Name}'");
+
+         if (targetTypeList.Count > 1)
+            throw new Exception($"There are several handlers of request '{request.Name}'");
+
+         services.AddScoped(targetTypeList[0]);
+
+      }
       return services;
    }
 }
