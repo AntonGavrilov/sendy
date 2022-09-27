@@ -3,7 +3,6 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <RootNamespace>Sendy</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <Description>Sendy is small and lightweight solution for CQRS</Description>

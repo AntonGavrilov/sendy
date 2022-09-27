@@ -15,8 +15,15 @@ public class SendyHandler : ISendy
 
    public TResponse Send<TResponse>(IRequest<TResponse> request) where TResponse : class
    {
+      if (request == null)
+      {
+         throw new ArgumentNullException(nameof(request));
+      }
+
       var generic = typeof(IHandler<,>);
+
       var response = request.GetType().GetInterfaces()[0].GetGenericArguments()[0];
+
       Type[] typeArgs = { request.GetType(), response };
 
       Type constructed = generic.GetGenericTypeDefinition().MakeGenericType(typeArgs);
@@ -24,12 +31,20 @@ public class SendyHandler : ISendy
       var targetTypeList = _assembly
          .GetTypes()
          .Where(t => t.GetInterfaces()
-         .Any(t => t == constructed)).ToList();
+         .Any(t => t == constructed)).ToArray();
+
+      if (targetTypeList.Length == 0)
+         throw new Exception($"There is no handlers of request '{request.GetType().Name}'");
+
+      if (targetTypeList.Length > 1)
+         throw new Exception($"There are several handlers of request '{request.GetType().Name}'");
+
+      var handlerType = targetTypeList[0];
 
       var handler = _serviceProvider.GetService(targetTypeList[0]);
-      var method = targetTypeList[0].GetMethod("Handle");
+      var method = handlerType.GetMethod("Handle");
 
-      var result = method?.Invoke(handler, new object?[] { request });
+      var result = method?.Invoke(handler, new object[] { request });
 
       if(result == null)
       {
@@ -41,6 +56,11 @@ public class SendyHandler : ISendy
 
    public void Send(IRequest request)
    {
+      if (request == null)
+      {
+         throw new ArgumentNullException(nameof(request));
+      }
+
       var generic = typeof(IHandler<IRequest>);
       Type[] typeArgs = { request.GetType() };
 
@@ -49,17 +69,30 @@ public class SendyHandler : ISendy
       var targetTypeList = _assembly
          .GetTypes()
          .Where(t => t.GetInterfaces()
-         .Any(t => t == constructed)).ToList();
+         .Any(t => t == constructed)).ToArray();
 
-      var handler = _serviceProvider.GetService(targetTypeList[0]);
-      var method = targetTypeList[0].GetMethod("Handle");
+      if (targetTypeList.Length == 0)
+         throw new Exception($"There is no handlers of request '{request.GetType().Name}'");
+
+      if (targetTypeList.Length > 1)
+         throw new Exception($"There are several handlers of request '{request.GetType().Name}'");
+
+      var handlerType = targetTypeList[0];
+
+      var handler = _serviceProvider.GetService(handlerType);
+      var method = handlerType.GetMethod("Handle");
 
 
-      method?.Invoke(handler, new object?[] { request });
+      method?.Invoke(handler, new object[] { request });
    }
 
    public async Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request) where TResponse : class
    {
+      if (request == null)
+      {
+         throw new ArgumentNullException(nameof(request));
+      }
+
       var generic = typeof(IAsyncHandler<,>);
       var response = request.GetType().GetInterfaces()[0].GetGenericArguments()[0];
       Type[] typeArgs = { request.GetType(), response };
@@ -69,12 +102,23 @@ public class SendyHandler : ISendy
       var targetTypeList = _assembly
          .GetTypes()
          .Where(t => t.GetInterfaces()
-         .Any(t => t == constructed)).ToList();
+         .Any(t => t == constructed)).ToArray();
 
-      var handler = _serviceProvider.GetService(targetTypeList[0]);
-      var method = targetTypeList[0].GetMethod("Handle");
+      if (targetTypeList.Length == 0)
+         throw new ApplicationException($"There is no handlers of request '{request.GetType().Name}'");
 
-      var result = (Task<TResponse>)method?.Invoke(handler, new object?[] { request });
+      if (targetTypeList.Length > 1)
+         throw new ApplicationException($"There are several handlers of request '{request.GetType().Name}'");
+
+      var handlerType = targetTypeList[0];
+
+      var handler = _serviceProvider.GetService(handlerType);
+      var method = handlerType.GetMethod("Handle");
+
+      if(method == null)
+         throw new ApplicationException($"There are no Handle method in '{request.GetType().Name}'");
+
+      var result = (Task<TResponse>)method.Invoke(handler, new object[] { request });
 
       if (result == null)
       {
@@ -86,6 +130,11 @@ public class SendyHandler : ISendy
 
    public async Task SendAsync(IAsyncRequest request)
    {
+      if (request == null)
+      {
+         throw new ArgumentNullException(nameof(request));
+      }
+
       var generic = typeof(IAsyncHandler<IAsyncRequest>);
       Type[] typeArgs = { request.GetType() };
 
@@ -94,13 +143,25 @@ public class SendyHandler : ISendy
       var targetTypeList = _assembly
          .GetTypes()
          .Where(t => t.GetInterfaces()
-         .Any(t => t == constructed)).ToList();
+         .Any(t => t == constructed)).ToArray();
 
-      var handler = _serviceProvider.GetService(targetTypeList[0]);
-      var method = targetTypeList[0].GetMethod("Handle");
+      if (targetTypeList.Length == 0)
+         throw new Exception($"There is no handlers of request '{request.GetType().Name}'");
 
-      var task = (Task)method?.Invoke(handler, new object?[] { request });
+      if (targetTypeList.Length > 1)
+         throw new Exception($"There are several handlers of request '{request.GetType().Name}'");
+
+      var handlerType = targetTypeList[0];
+
+      var handler = _serviceProvider.GetService(handlerType);
+      var method = handlerType.GetMethod("Handle");
+
+      if (method == null)
+         throw new ApplicationException($"There are no Handle method in '{request.GetType().Name}'");
+
+      var task = (Task)method?.Invoke(handler, new object[] { request });
 
       await task;
    }
+
 }

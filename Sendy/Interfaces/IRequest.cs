@@ -8,10 +8,3 @@ public interface IRequest
 {
 }
 
-public interface IAsyncRequest<TResponse>
-{
-}
-
-public interface IAsyncRequest
-{
-}
