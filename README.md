@@ -2,7 +2,6 @@
 
 **Sendy** is a small, lightweight .NET library for implementing the **CQRS** pattern (Command Query Responsibility Segregation).  
 It enables clean separation between write and read operations with minimal ceremony, and supports both synchronous and asynchronous handlers.
-A simple, fast alternative to MediatR — no magic, just CQRS
 ---
 
 ## 🚀 Installation
