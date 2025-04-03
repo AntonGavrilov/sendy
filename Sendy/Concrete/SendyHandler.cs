@@ -13,7 +13,7 @@ public class SendyHandler : ISendy
       _serviceProvider = serviceProvider;
    }
 
-   public TResponse Send<TResponse>(IRequest<TResponse> request) where TResponse : class
+   public TResponse Send<TResponse>(IRequest<TResponse> request) 
    {
       if (request == null)
       {
@@ -48,7 +48,7 @@ public class SendyHandler : ISendy
 
       if(result == null)
       {
-         return null;
+         return default;
       }
 
       return (TResponse)result;
@@ -86,7 +86,7 @@ public class SendyHandler : ISendy
       method?.Invoke(handler, new object[] { request });
    }
 
-   public async Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request) where TResponse : class
+   public async Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request) 
    {
       if (request == null)
       {
@@ -120,9 +120,9 @@ public class SendyHandler : ISendy
 
       var result = (Task<TResponse>)method.Invoke(handler, new object[] { request });
 
-      if (result == null)
+      if(result == null)
       {
-         return null;
+         return default;
       }
 
       return await result;

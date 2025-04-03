@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sendy", "Sendy.csproj", "{CA154AB3-7CAE-D3F2-DC65-6808B0C45DAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA154AB3-7CAE-D3F2-DC65-6808B0C45DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA154AB3-7CAE-D3F2-DC65-6808B0C45DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA154AB3-7CAE-D3F2-DC65-6808B0C45DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA154AB3-7CAE-D3F2-DC65-6808B0C45DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF3954B0-F380-4118-8100-351D035FD620}
+	EndGlobalSection
+EndGlobal
