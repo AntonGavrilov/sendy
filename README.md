@@ -1,146 +1,145 @@
 # Sendy
-Sendy is small and lightweight solution for CQRS. 
 
-Fast synchronous and asynchronous handlers of commands and queries.
+**Sendy** is a small, lightweight .NET library for implementing the **CQRS** pattern (Command Query Responsibility Segregation).  
+It enables clean separation between write and read operations with minimal ceremony, and supports both synchronous and asynchronous handlers.
 
-### Installing Sendy
+---
 
-Command line interface:
+## 🚀 Installation
 
-    dotnet add package Sendy
-    
-..or download directly from nuget [Sendy](https://www.nuget.org/packages/Sendy):     
+Install via the .NET CLI:
 
-### Configuration
+```bash
+dotnet add package Sendy
+```
 
-First, you need to configure Sendy in your Startup.cs：
+Or download it from [NuGet.org](https://www.nuget.org/packages/Sendy)
 
-```cs
+---
+
+## ⚙️ Configuration
+
+Register Sendy in your `Startup.cs` or `Program.cs`:
+
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    //......
-
     services.AddSendy(typeof(Program).Assembly);
 }
 ```
-### Add command or query class
 
-Add command or query class derving for 'IRequest' or 'IAsyncRequest'. If you want create command use 'IRequest'('IAsyncRequest') interface or if you want query use 'IRequest<>'('IAsyncRequest<>')
+---
 
-Sync example:
-```cs
-public class TestResult
+## 🧱 Defining Commands & Queries
+
+Implement one of the following interfaces:
+
+| Purpose        | Interface                        |
+|----------------|----------------------------------|
+| Command        | `IRequest`, `IAsyncRequest`       |
+| Query (with result) | `IRequest<TResult>`, `IAsyncRequest<TResult>` |
+
+### Example: Creating an Order
+
+```csharp
+public class CreateOrderCommand : IRequest<Guid>
 {
-   ... properties
+    public string CustomerId { get; set; }
+    public List<string> ProductIds { get; set; }
 }
-public class TestSyncCommandWithResult : IRequest<TestResult>
-{
-   ... properties
-}
-
-public class TestSyncCommand : IRequest
-{
-   ... properties
-}
-
-
 ```
-Async example:
 
-```cs
-public class TestResult
+### Example: Querying Top Products
+
+```csharp
+public class GetTopSellingProductsQuery : IAsyncRequest<List<ProductDto>>
 {
-   ... properties
+    public int TopCount { get; set; } = 5;
 }
-public class TestAsyncCommandWithResult : IAsyncRequest<TestResult>
-{
-   ... properties
-}
-
-public class TestAsyncCommand : IAsyncRequest
-{
-   ... properties
-}
-
-
 ```
-### Add handler for created request classes
-Add command handlers or query handlers class deriving form 'IHandler' or 'IAsyncHandler'. For command handler use 'IRequest'('IAsyncHandler') interface or if you want query use 'IHandler<>'('IAsyncRequest<>')
 
-Sync example:
-```cs
-public class TestSyncCommandWithResultHandler : IHandler<TestSyncCommandWithResult, TestResult>
+---
+
+## 🧰 Implementing Handlers
+
+### Synchronous Command Handler
+
+```csharp
+public class CreateOrderHandler : IHandler<CreateOrderCommand, Guid>
 {
-   private readonly ILogger<TestSyncCommandHandler> _logger;
-   public TestSyncCommandWithResultHandler(ILogger<TestSyncCommandHandler> logger)
-   {
-      _logger = logger;
-   }
-   public TestResult Handle(TestSyncCommandWithResult request)
-   {
-      _logger.LogInformation("TestSyncCommandWithResult");
-      return new SearchResultDto();
-   }
+    public Guid Handle(CreateOrderCommand request)
+    {
+        // Simulate saving to DB
+        var orderId = Guid.NewGuid();
+        Console.WriteLine($"Order {orderId} created for Customer {request.CustomerId}");
+        return orderId;
+    }
 }
-
-public class TestSyncCommandHandler : IHandler<TestSyncCommand>
-{
-   private readonly ILogger<TestSyncCommandHandler> _logger;
-
-   public TestSyncCommandHandler(ILogger<TestSyncCommandHandler> logger)
-   {
-      _logger = logger;
-   }
-
-   public void Handle(TestSyncCommand request)
-   {
-      _logger.LogInformation("TestSyncCommand");
-   }
-}
-
-
 ```
-Async example:
 
-```cs
-public class TestAsyncCommandWithResultHandler : IAsyncHandler<TestAsyncCommandWithResult, SearchResultDto>
+### Asynchronous Query Handler
+
+```csharp
+public class GetTopSellingProductsHandler : IAsyncHandler<GetTopSellingProductsQuery, List<ProductDto>>
 {
-   private readonly ILogger<TestSyncCommandHandler> _logger;
-   public TestSyncCommandWithResultHandler(ILogger<TestSyncCommandHandler> logger)
-   {
-      _logger = logger;
-   }
-   public Task<TestResult> Handle(TestSyncCommandWithResult request)
-   {
-      _logger.LogInformation("TestSyncCommandWithResult");
-      return new SearchResultDto();
-   }
-}
+    public async Task<List<ProductDto>> Handle(GetTopSellingProductsQuery request)
+    {
+        // Simulate async DB call
+        await Task.Delay(100);
 
-public class TestAsyncCommandHandler : IAsyncHandler<TestAsyncCommand>
+        return new List<ProductDto>
+        {
+            new("Product A", 128),
+            new("Product B", 115),
+            new("Product C", 98)
+        }.Take(request.TopCount).ToList();
+    }
+}
+```
+
+---
+
+## ✉️ Dispatching Commands and Queries
+
+### Synchronous
+
+```csharp
+var orderId = _sendy.Send(new CreateOrderCommand
 {
-   private readonly ILogger<TestSyncCommandHandler> _logger;
-
-   public TestSyncCommandHandler(ILogger<TestSyncCommandHandler> logger)
-   {
-      _logger = logger;
-   }
-
-   public Task Handle(TestAsyncCommand request)
-   {
-      _logger.LogInformation("TestSyncCommand");
-   }
-}
-
+    CustomerId = "cust-123",
+    ProductIds = new List<string> { "prod-1", "prod-2" }
+});
 ```
-### Use ISendy class for sending command or queries.
 
-Use 'Send' method of ISendy instanse to send sync command or query and use "SendAsync" command for async functionality
+### Asynchronous
 
-```cs
-
-var result = _sendy.Send(new TestSyncCommandWithResult());
-
-_sendy.Send(new TestSyncCommand());
-
+```csharp
+var topProducts = await _sendy.SendAsync(new GetTopSellingProductsQuery
+{
+    TopCount = 3
+});
 ```
+
+---
+
+## 🧪 DTOs Used in Examples
+
+```csharp
+public record ProductDto(string Name, int UnitsSold);
+```
+
+---
+
+## ✅ Why Sendy?
+
+- 🔹 Clean separation of responsibilities (CQRS)
+- 🔹 Supports both sync and async flows
+- 🔹 Minimal boilerplate
+- 🔹 Testable and modular
+- 🔹 Fast to set up and extend
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.

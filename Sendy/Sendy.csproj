@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Sendy</RootNamespace>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -11,9 +11,9 @@
         <PackageReadmeFile></PackageReadmeFile>
         <RepositoryUrl>https://github.com/AntonGavrilov/sendy</RepositoryUrl>
         <PackageTags>CQRS; Commands and Queries</PackageTags>
-        <FileVersion>1.0.0.2</FileVersion>
-        <AssemblyVersion>1.0.0.2</AssemblyVersion>
-        <Version>1.0.0.2</Version>
+        <FileVersion>1.0.0.3</FileVersion>
+        <AssemblyVersion>1.0.0.3</AssemblyVersion>
+        <Version>1.0.0.3</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Company>Anton Gavrilov</Company>
         <Authors>Anton Gavrilov</Authors>
@@ -21,14 +21,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="..\..\..\Downloads\48ab3ab4b6eb4a39a1e6a4b84bbbd381.png">
+      <None Include="48ab3ab4b6eb4a39a1e6a4b84bbbd381.png">
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0-rc.1.22426.10" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
     </ItemGroup>
 
 </Project>
