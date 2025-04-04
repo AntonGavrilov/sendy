@@ -1,25 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <RootNamespace>Sendy</RootNamespace>
-        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <Description>Sendy is free, small and lightweight solution for CQRS. It's good alternative to MediatR</Description>
-        <PackageProjectUrl>https://github.com/AntonGavrilov/sendy</PackageProjectUrl>
-        <PackageIcon>48ab3ab4b6eb4a39a1e6a4b84bbbd381.png</PackageIcon>
-        <PackageReadmeFile></PackageReadmeFile>
-        <RepositoryUrl>https://github.com/AntonGavrilov/sendy</RepositoryUrl>
-        <PackageTags>CQRS; mediator; mediatr; cqrs; dotnet; csharp; messagebus</PackageTags>
-        <FileVersion>1.0.0.4</FileVersion>
-        <AssemblyVersion>1.0.0.4</AssemblyVersion>
-        <Version>1.0.0.4</Version>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <Company>Anton Gavrilov</Company>
-        <Authors>Anton Gavrilov</Authors>
-
+      <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <RootNamespace>Sendy</RootNamespace>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <Description>Sendy is free, small and lightweight solution for CQRS. It's good alternative to MediatR</Description>
+      <PackageProjectUrl>https://github.com/AntonGavrilov/sendy</PackageProjectUrl>
+      <PackageIcon>48ab3ab4b6eb4a39a1e6a4b84bbbd381.png</PackageIcon>
+      <RepositoryUrl>https://github.com/AntonGavrilov/sendy</RepositoryUrl>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <PackageTags>CQRS; mediator; mediatr; cqrs; dotnet; csharp; messagebus</PackageTags>
+      <FileVersion>1.0.0.5</FileVersion>
+      <AssemblyVersion>1.0.0.5</AssemblyVersion>
+      <Version>1.0.0.5</Version>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <Company>Anton Gavrilov</Company>
+      <Authors>Anton Gavrilov</Authors>
     </PropertyGroup>
 
+      <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="" />
+      </ItemGroup>
     <ItemGroup>
       <None Include="48ab3ab4b6eb4a39a1e6a4b84bbbd381.png">
         <Pack>True</Pack>

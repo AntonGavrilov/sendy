@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Sendy.Interfaces;
+﻿namespace Sendy.Interfaces;
 
 public interface ISendy
 {
